@@ -1,0 +1,121 @@
+C51 COMPILER V9.60.7.0   SEVENSEGMENT                                                      09/28/2024 20:48:19 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SEVENSEGMENT
+OBJECT MODULE PLACED IN .\Objects\sevensegment.obj
+COMPILER INVOKED BY: C:\Personal-Work\C51\BIN\C51.EXE sevensegment.c BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\sevenseg
+                    -ment.lst) TABS(2) OBJECT(.\Objects\sevensegment.obj)
+
+line level    source
+
+   1          #include<reg51.h>
+   2          // seven segment 
+   3          unsigned char ds1,ds2,ds3,ds4,p,q,r;
+   4          unsigned arr[]={0xfc,0x60,0xda,0xf2,0x66,0xb6,0xbe,0xe0,0xfe,0xf,0xee,0x3e,0x9c,0x7a,0x9e,0x8e};
+   5          
+   6            void delay();
+   7            void inc();
+   8            void display();
+   9              
+  10              sbit s11 = P2^0;
+  11              sbit s12 = P2^1;
+  12              sbit s13 = P2^2;
+  13              sbit s14 = P2^3;
+  14          
+  15              main()
+  16               {
+  17   1                ds1 = 0x00;
+  18   1                ds2 = 0x00;
+  19   1                ds3 = 0x00;
+  20   1                ds4 = 0x00;
+  21   1             while(1)
+  22   1             {
+  23   2               {
+  24   3                 for(r=28;r>0;r--)
+  25   3                 display();
+  26   3               }
+  27   2               inc();
+  28   2             }
+  29   1           }
+  30               
+  31               void display()
+  32               {
+  33   1             s11 = 0;
+  34   1             s12 = 1;
+  35   1             s13 = 1;
+  36   1             s14 = 1;
+  37   1             P0 =arr[ds1];
+  38   1             delay();
+  39   1             
+  40   1             s11 = 1;
+  41   1             s12 = 0;
+  42   1             s13 = 1;
+  43   1             s14 = 1;
+  44   1             P0 =arr[ds2];
+  45   1             delay();
+  46   1             
+  47   1             s11 = 1;
+  48   1             s12 = 1;
+  49   1             s13 = 0;
+  50   1             s14 = 1;
+  51   1             P0 =arr[ds3];
+  52   1             delay();
+  53   1             
+  54   1             s11 = 1;
+C51 COMPILER V9.60.7.0   SEVENSEGMENT                                                      09/28/2024 20:48:19 PAGE 2   
+
+  55   1             s12 = 1;
+  56   1             s13 = 1;
+  57   1             s14 = 0;
+  58   1             P0 =arr[ds4];
+  59   1             delay();
+  60   1           }
+  61               
+  62               void delay()
+  63               {
+  64   1             for(p=0;p<5;p++)
+  65   1              {
+  66   2                for(q=0;q<255;q++)
+  67   2                 {
+  68   3                 }
+  69   2              }
+  70   1           }
+  71               
+  72               void inc()
+  73               {
+  74   1             ds1++;
+  75   1             if(ds1 == 0x0f+1)
+  76   1             {
+  77   2               ds1 = 0x00;
+  78   2               ds2++;
+  79   2               if(ds2 == 0x0f+1)
+  80   2             {
+  81   3               ds2 = 0x00;
+  82   3               ds3++;
+  83   3               if(ds3 == 0x0f+1)
+  84   3             {
+  85   4               ds3 = 0x00;
+  86   4               ds4++;
+  87   4               if(ds4 == 0x0f+1)
+  88   4             {
+  89   5               ds1 = ds2 = ds3 = ds4 = 0x00;
+  90   5             }
+  91   4             }
+  92   3             }    
+  93   2             }
+  94   1           }
+  95              
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    167    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     39    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
