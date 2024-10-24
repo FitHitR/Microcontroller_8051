@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\LCD_INC_2.obj" 
+TO ".\Objects\LCD_INC_2" 
+PRINT(".\Listings\LCD_INC_2.m51") RAMSIZE(256) 

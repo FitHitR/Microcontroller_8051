@@ -1,0 +1,63 @@
+C51 COMPILER V9.60.7.0   UART_DEMO                                                         08/01/2024 14:22:13 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART_DEMO
+OBJECT MODULE PLACED IN .\Objects\UART_Demo.obj
+COMPILER INVOKED BY: C:\Personal-Work\C51\BIN\C51.EXE UART_Demo.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Li
+                    -stings\UART_Demo.lst) TABS(2) OBJECT(.\Objects\UART_Demo.obj)
+
+line level    source
+
+   1          #include<reg51.h>
+   2             
+   3             void Tx();
+   4             void Rx();
+   5             
+   6             void init_UART()
+   7             {
+   8   1           SCON = 0x52;
+   9   1           TMOD = 0x20;
+  10   1           TH1 = 0xFD;
+  11   1           TR1 = 1;
+  12   1         }
+  13             
+  14             main()
+  15             {
+  16   1           P0 = 0x00;
+  17   1           init_UART();
+  18   1           ACC = 'M';
+  19   1           while(1)
+  20   1           {
+  21   2             Tx();
+  22   2             Rx();
+  23   2           }
+  24   1         }
+  25             
+  26             void Tx()
+  27             {
+  28   1           while(!TI)
+  29   1             SBUF = ACC;
+  30   1             TI = 1;
+  31   1         }
+  32               
+  33             void Rx()
+  34             {
+  35   1           while(!RI)
+  36   1             ACC = SBUF;
+  37   1             P0 = ACC;
+  38   1             RI = 0;
+  39   1         }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     50    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

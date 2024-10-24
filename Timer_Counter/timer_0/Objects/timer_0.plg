@@ -1,0 +1,75 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Personal-Work\Emb\LED\Timer_Counter\timer_0\timer_0.uvproj
+Project File Date:  09/11/2024
+
+<h2>Output:</h2>
+compiling timer_0.c...
+timer_0.c - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 2016
+"C:\Personal-Work\C51\BIN\A51.EXE" "STARTUP.A51" SET (SMALL) DEBUG PRINT(.\Listings\STARTUP.lst) OBJECT(.\Objects\STARTUP.obj) EP
+A51 FATAL ERROR -
+  FILE:       STARTUP.A51
+  ERROR:      FILE DOES NOT EXIST
+A51 TERMINATED.
+Target not created
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 2016
+"C:\Personal-Work\C51\BIN\A51.EXE" "STARTUP.A51" SET (SMALL) DEBUG PRINT(.\Listings\STARTUP.lst) OBJECT(.\Objects\STARTUP.obj) EP
+A51 FATAL ERROR -
+  FILE:       STARTUP.A51
+  ERROR:      FILE DOES NOT EXIST
+A51 TERMINATED.
+Target not created
+compiling timer_0.c...
+timer_0.c - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 2016
+"C:\Personal-Work\C51\BIN\A51.EXE" "STARTUP.A51" SET (SMALL) DEBUG PRINT(.\Listings\STARTUP.lst) OBJECT(.\Objects\STARTUP.obj) EP
+A51 FATAL ERROR -
+  FILE:       STARTUP.A51
+  ERROR:      FILE DOES NOT EXIST
+A51 TERMINATED.
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 2016
+"C:\Personal-Work\C51\BIN\A51.EXE" "STARTUP.A51" SET (SMALL) DEBUG PRINT(.\Listings\STARTUP.lst) OBJECT(.\Objects\STARTUP.obj) EP
+A51 FATAL ERROR -
+  FILE:       STARTUP.A51
+  ERROR:      FILE DOES NOT EXIST
+A51 TERMINATED.
+Target not created
+Rebuild target 'Target 1'
+assembling STARTUP.A51...
+A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 2016
+"C:\Personal-Work\C51\BIN\A51.EXE" "STARTUP.A51" SET (SMALL) DEBUG PRINT(.\Listings\STARTUP.lst) OBJECT(.\Objects\STARTUP.obj) EP
+A51 FATAL ERROR -
+  FILE:       STARTUP.A51
+  ERROR:      FILE DOES NOT EXIST
+A51 TERMINATED.
+Target not created
+compiling timer_0.c...
+timer_0.c - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+A51 MACRO ASSEMBLER V8.2.7.0 - SN: Eval Version
+COPYRIGHT ARM Germany GmbH 2016
+"C:\Personal-Work\C51\BIN\A51.EXE" "STARTUP.A51" SET (SMALL) DEBUG PRINT(.\Listings\STARTUP.lst) OBJECT(.\Objects\STARTUP.obj) EP
+A51 FATAL ERROR -
+  FILE:       STARTUP.A51
+  ERROR:      FILE DOES NOT EXIST
+A51 TERMINATED.
+Target not created

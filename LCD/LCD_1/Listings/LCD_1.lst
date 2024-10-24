@@ -1,0 +1,191 @@
+C51 COMPILER V9.60.7.0   LCD_1                                                             09/30/2024 13:20:19 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE LCD_1
+OBJECT MODULE PLACED IN .\Objects\LCD_1.obj
+COMPILER INVOKED BY: C:\Personal-Work\C51\BIN\C51.EXE LCD_1.C BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\LCD_1.lst) TABS
+                    -(2) OBJECT(.\Objects\LCD_1.obj)
+
+line level    source
+
+   1          #include<reg51.h>
+   2          #include<intrins.h>
+   3          unsigned char dc1,dc2,r,s;
+   4          sbit sl = P0^0;
+   5          sbit rs = P0^1;  //commands==0 or data==1
+   6          sbit rw = P0^2;  // read==1 or wright==0
+   7          sbit e = P0^3;   // enabled 
+   8          sbit d4 = P0^4;
+   9          sbit d5 = P0^5;
+  10          sbit d6 = P0^6;
+  11          sbit d7 = P0^7;
+  12          
+  13          sbit a0 = ACC^0;
+  14          sbit a1 = ACC^1;
+  15          sbit a2 = ACC^2;
+  16          sbit a3 = ACC^3;
+  17          sbit a4 = ACC^4;
+  18          sbit a5 = ACC^5;
+  19          sbit a6 = ACC^6;
+  20          sbit a7 = ACC^7;
+  21          
+  22          bit c;           //temporary storage bit
+  23          
+  24          void init_lcd();
+  25          void c_wr();        // commands
+  26          void d_wr();        // Data
+  27          void delay();
+  28          void map();         //accumulator bits to the LCD data pins.
+  29          void toggle();      // generates a pulse on the LCD enable pin.
+  30          
+  31          
+  32          unsigned char arr[] = {'R','A','N','J','E','E','T',};
+  33          unsigned char arr1[] = {'M','U','N','D','F','A','N','F'};
+  34          
+  35            main()
+  36             {
+  37   1           init_lcd();    
+  38   1           ACC = 0x84;    //lcd start with 80 to 8f we waant the name in
+  39   1           c_wr();
+  40   1           delay();
+  41   1           
+  42   1           for(r=0; r<=6; r++)
+  43   1           {
+  44   2             ACC = arr[r];
+  45   2             d_wr();
+  46   2             delay();
+  47   2           }
+  48   1           
+  49   1           ACC = 0xC5;
+  50   1           c_wr();
+  51   1           delay();
+  52   1           for(s=0; s<=7;s++)
+  53   1           {
+  54   2             ACC = arr[s];
+C51 COMPILER V9.60.7.0   LCD_1                                                             09/30/2024 13:20:19 PAGE 2   
+
+  55   2             d_wr();
+  56   2             delay(); 
+  57   2           }
+  58   1           while(1)
+  59   1           {
+  60   2           }     
+  61   1         }
+  62             
+  63             void init_lcd()
+  64             {
+  65   1           delay();
+  66   1           delay();
+  67   1           delay();
+  68   1           
+  69   1           ACC = 0x03;
+  70   1           c_wr();
+  71   1           delay();
+  72   1           
+  73   1           ACC = 0x03;
+  74   1           c_wr();
+  75   1           delay();
+  76   1           
+  77   1           ACC = 0x03;
+  78   1           c_wr();
+  79   1           delay();
+  80   1           
+  81   1           ACC = 0x02;
+  82   1           c_wr();
+  83   1           delay();
+  84   1           
+  85   1           ACC = 0x28;
+  86   1           c_wr();
+  87   1           delay();
+  88   1           
+  89   1            ACC = 0x01;
+  90   1           c_wr();
+  91   1           delay();
+  92   1           
+  93   1            ACC = 0x06;
+  94   1           c_wr();
+  95   1           delay();
+  96   1           
+  97   1            ACC = 0x0f;
+  98   1           c_wr();
+  99   1           delay();
+ 100   1           sl = 0;
+ 101   1         }
+ 102             
+ 103             void c_wr()
+ 104             {
+ 105   1           rs = 0;   //command
+ 106   1           rw = 0;  //wright
+ 107   1           map();
+ 108   1           toggle();
+ 109   1           a7 = a3;
+ 110   1           a6 = a2;
+ 111   1           a5 = a1;
+ 112   1           a4 = a0;
+ 113   1           map();
+ 114   1           toggle();     
+ 115   1         }
+ 116             
+C51 COMPILER V9.60.7.0   LCD_1                                                             09/30/2024 13:20:19 PAGE 3   
+
+ 117             void d_wr()
+ 118             {
+ 119   1           rs = 1;   //data
+ 120   1           rw = 0;   //wright
+ 121   1           map();
+ 122   1           toggle();
+ 123   1           a4 = a0;
+ 124   1           a5 = a1;
+ 125   1           a6 = a2;
+ 126   1           a7 = a3;
+ 127   1           map();
+ 128   1           toggle();     
+ 129   1         }
+ 130             
+ 131             void delay()
+ 132             {
+ 133   1           for(dc2=0; dc2<80; dc2++)
+ 134   1           {
+ 135   2             for(dc1=0; dc1<250; dc1++)
+ 136   2             {
+ 137   3             }
+ 138   2           }
+ 139   1         }
+ 140             
+ 141             void map()
+ 142             {
+ 143   1           c = a4;
+ 144   1           d4 = c;
+ 145   1           c = a5 ;
+ 146   1           d5 = c;
+ 147   1           c = a6;
+ 148   1           d6 = c;
+ 149   1           c = a7;
+ 150   1           d6 = c;
+ 151   1         }
+ 152             
+ 153             void toggle()
+ 154             {                    //e==0; receive data or commands
+ 155   1           _nop_();           //e== 1; can not be
+ 156   1           e = 0;
+ 157   1           _nop_();           //_nop_ = "No Operation".
+ 158   1           e = 1;
+ 159   1           _nop_();
+ 160   1           _nop_();
+ 161   1           e = 0;
+ 162   1           _nop_();
+ 163   1         }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    275    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     19    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
