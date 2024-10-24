@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\key_pad_2.obj" 
+TO ".\Objects\key_pad_2" 
+PRINT(".\Listings\key_pad_2.m51") RAMSIZE(256) 

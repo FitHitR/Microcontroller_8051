@@ -1,0 +1,502 @@
+C51 COMPILER V9.60.7.0   KEY_PAD_2                                                         07/27/2024 16:58:59 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE KEY_PAD_2
+OBJECT MODULE PLACED IN .\Objects\key_pad_2.obj
+COMPILER INVOKED BY: C:\Personal-Work\C51\BIN\C51.EXE key_pad_2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Li
+                    -stings\key_pad_2.lst) TABS(2) OBJECT(.\Objects\key_pad_2.obj)
+
+line level    source
+
+   1          //keypad interfacing start freez reset
+   2          
+   3          #include<reg51.h>
+   4          sbit sl1=P2^0;
+   5          sbit sl2=P2^1;
+   6          sbit sl3=P2^2;
+   7          sbit sl4=P2^3;
+   8          sbit krl1=P2^4;
+   9          sbit krl2=P2^5;
+  10          sbit krl3=P2^6;
+  11          sbit krl4=P3^7;
+  12          sbit sb=P1^5;
+  13          bit key_ready;
+  14          bit nkp;                 //no key press
+  15          bit tb;
+  16          bit start_sw;
+  17          bit sl_over;
+  18          bit s_buzzer;
+  19          bit c;                    //count
+  20          unsigned char ds1,ds2,ds3,ds4,y,r,n,b,key_code,z;
+  21          unsigned char dcount,krcount,x,sn,cnt_1sl,cnt_1sh,k1,m;
+  22          
+  23          unsigned char arr[]={0xfc,0x60,0xda,0xf2,0x66,0xb6,0xbe,0xe0,0xfe,0xf6,0x00,0xff,0xff,0xff,0xff,0xff,0xff,
+             -0xee,0x3e,0x9c,0x7a,0x9e,0x8e};
+  24          
+  25          
+  26          unsigned char ascii[]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+  27          
+  28            void init_delay();
+  29            void delay1s();
+  30            void init();
+  31            void init_keypad();
+  32            void init_timer0();
+  33            void scanner();
+  34            void k();
+  35            void rr();
+  36            void inc();
+  37            void disp_sw();
+  38            void keyprocess();
+  39            void process_a();
+  40            void process_b();
+  41            void process_c();
+  42            void get_key();
+  43            void init_delay1s();
+  44            void key_release();
+  45            void buzzer();
+  46            
+  47              void main()
+  48                {
+  49   1              init();
+  50   1              EA=1;
+  51   1              disp_sw();
+  52   1              
+  53   1              while(1)
+C51 COMPILER V9.60.7.0   KEY_PAD_2                                                         07/27/2024 16:58:59 PAGE 2   
+
+  54   1                {
+  55   2                  get_key();
+  56   2                  keyprocess();
+  57   2                }
+  58   1            }
+  59              
+  60                void init()
+  61                  {
+  62   1                init_keypad();
+  63   1                init_timer0();
+  64   1                init_delay();
+  65   1              }
+  66          
+  67                  void init_keypad()
+  68                    {
+  69   1                  krl1=1;
+  70   1                  krl2=1;
+  71   1                  krl3=1;
+  72   1                  krl4=1;
+  73   1                  sn=0;
+  74   1                  dcount=33;
+  75   1                  krcount=32;
+  76   1                  key_ready=0;
+  77   1                  nkp=0;
+  78   1                  s_buzzer=0;
+  79   1                }
+  80          
+  81              void init_timer0()
+  82                {
+  83   1              TMOD=0x01;
+  84   1              TL0=0x66;
+  85   1              TH0=0xfc;
+  86   1              TR0=1;
+  87   1              ET0=1;
+  88   1            }
+  89            
+  90              void isr_t0() interrupt 1 using 0
+  91                {
+  92   1              init_timer0();
+  93   1              delay1s();
+  94   1              buzzer();
+  95   1              scanner();
+  96   1              while(sl_over==0)
+  97   1                {
+  98   2                  goto out_isr;  
+  99   2                }    
+ 100   1                inc();
+ 101   1                sl_over=0;
+ 102   1                out_isr:
+ 103   1                m=0; 
+ 104   1            }
+ 105            
+ 106              void init_delay1s()
+ 107                {
+ 108   1              cnt_1sl=0xe8;
+ 109   1              cnt_1sh=0x04;
+ 110   1              sl_over=1;
+ 111   1            }
+ 112          
+ 113              void delay1s()
+ 114                {
+ 115   1              if(sl_over==1)
+C51 COMPILER V9.60.7.0   KEY_PAD_2                                                         07/27/2024 16:58:59 PAGE 3   
+
+ 116   1                {
+ 117   2                  goto out_ds1sec;   
+ 118   2                }
+ 119   1                cnt_1sl--;      
+ 120   1                if(cnt_1sh!=0)
+ 121   1                  {
+ 122   2                    cnt_1sl=0xff;
+ 123   2                  }
+ 124   1                  cnt_1sh--;
+ 125   1                  if(cnt_1sh!=0)
+ 126   1                    {
+ 127   2                      cnt_1sl=0xff;
+ 128   2                    }
+ 129   1                    cnt_1sh=0x04;
+ 130   1                    cnt_1sl=0xe8;
+ 131   1                    sl_over=1;              
+ 132   1                    out_ds1sec:
+ 133   1                    k1=0;
+ 134   1            }
+ 135            
+ 136            
+ 137            void scanner()
+ 138            {
+ 139   1         ACC=sn;
+ 140   1          switch(ACC)
+ 141   1            {
+ 142   2            case 0:
+ 143   2            sl1=0;
+ 144   2            sl2=1;
+ 145   2            sl3=1;
+ 146   2            sl4=1;
+ 147   2            P0=arr[ds1-'0'];
+ 148   2            c=krl1;
+ 149   2            k();
+ 150   2            sn=1;
+ 151   2            break;
+ 152   2          
+ 153   2            case 1:
+ 154   2            c=krl2;
+ 155   2            k();
+ 156   2            sn=2;
+ 157   2            break;
+ 158   2          
+ 159   2            case 2:
+ 160   2            c=krl3;
+ 161   2            k();
+ 162   2            sn=3;
+ 163   2            break;
+ 164   2          
+ 165   2            case 3:
+ 166   2            c=krl4;
+ 167   2            k();
+ 168   2            P0=0x00;
+ 169   2            sn=4;
+ 170   2            break;
+ 171   2          
+ 172   2          case 4:
+ 173   2            sl1=1;
+ 174   2            sl2=0;
+ 175   2            sl3=1;
+ 176   2            sl4=1;
+ 177   2            P0=arr[ds2-'0'];
+C51 COMPILER V9.60.7.0   KEY_PAD_2                                                         07/27/2024 16:58:59 PAGE 4   
+
+ 178   2            c=krl1;
+ 179   2            k();
+ 180   2            sn=5;
+ 181   2            break;
+ 182   2          
+ 183   2          case 5:
+ 184   2            c=krl2;
+ 185   2            k();
+ 186   2            sn=6;
+ 187   2            break;
+ 188   2          
+ 189   2          case 6:
+ 190   2            c=krl3;
+ 191   2            k();
+ 192   2            sn=7;
+ 193   2            break;
+ 194   2          
+ 195   2          case 7:
+ 196   2            c=krl4;
+ 197   2            k();
+ 198   2            P0=0x00;
+ 199   2            sn=8;
+ 200   2            break;
+ 201   2          
+ 202   2          case 8:
+ 203   2            sl1=1;
+ 204   2            sl2=1;
+ 205   2            sl3=0;
+ 206   2            sl4=1;
+ 207   2            P0=arr[ds3-'0'];
+ 208   2            c=krl1;
+ 209   2            k();
+ 210   2            sn=9;
+ 211   2            break;
+ 212   2          
+ 213   2          case 9:
+ 214   2            c=krl2;
+ 215   2            k();
+ 216   2            sn=10;
+ 217   2            break;
+ 218   2          
+ 219   2          case 10:
+ 220   2            c=krl3;
+ 221   2            k();
+ 222   2            sn=11;
+ 223   2            break;
+ 224   2        
+ 225   2          case 11:
+ 226   2            P0=0x00;
+ 227   2            c=krl4;
+ 228   2            k();
+ 229   2            sn=12;
+ 230   2            break;
+ 231   2          
+ 232   2          case 12:
+ 233   2            sl1=1;
+ 234   2            sl2=1;
+ 235   2            sl3=1;
+ 236   2            sl4=0;
+ 237   2            P0=arr[ds4-'0'];
+ 238   2            c=krl1;
+ 239   2            k();
+C51 COMPILER V9.60.7.0   KEY_PAD_2                                                         07/27/2024 16:58:59 PAGE 5   
+
+ 240   2            sn=13;
+ 241   2            break;
+ 242   2          
+ 243   2          case 13:
+ 244   2            c=krl2;
+ 245   2            k();
+ 246   2            sn=14;
+ 247   2            break;
+ 248   2          
+ 249   2          case 14:
+ 250   2            c=krl3;
+ 251   2            k();
+ 252   2            sn=15;
+ 253   2            break;
+ 254   2          
+ 255   2          case 15:
+ 256   2            P0=0x00;
+ 257   2            c=krl4;
+ 258   2            k();
+ 259   2            sn=0;
+ 260   2            break;  
+ 261   2            }
+ 262   1        }
+ 263            
+ 264            void k()
+ 265            {
+ 266   1          if(key_ready==1)
+ 267   1            {
+ 268   2               rr();
+ 269   2            }
+ 270   1            else
+ 271   1            { 
+ 272   2              if(dcount==33)
+ 273   2                {
+ 274   3                  if(c==0)
+ 275   3                    {
+ 276   4                      dcount--;
+ 277   4                      key_code=sn;
+ 278   4                      goto out_k;
+ 279   4                    }
+ 280   3                }
+ 281   2                else
+ 282   2                  {
+ 283   3                    dcount--;
+ 284   3                    if(dcount==0)
+ 285   3                      {
+ 286   4                        if(c==0)
+ 287   4                          {
+ 288   5                            key_ready=1;
+ 289   5                            s_buzzer=1;
+ 290   5                            dcount=33;
+ 291   5                            goto out_k;
+ 292   5                          }
+ 293   4                          else
+ 294   4                            {
+ 295   5                              dcount=33;
+ 296   5                              goto out_k;
+ 297   5                            }
+ 298   4                      }
+ 299   3                      else
+ 300   3                        {
+ 301   4                          goto out_k;
+C51 COMPILER V9.60.7.0   KEY_PAD_2                                                         07/27/2024 16:58:59 PAGE 6   
+
+ 302   4                        }
+ 303   3                  }
+ 304   2            }
+ 305   1            out_k:
+ 306   1            x=0;
+ 307   1        }
+ 308            void rr()
+ 309              {
+ 310   1            if(c==0)
+ 311   1              {
+ 312   2                krcount=32;
+ 313   2                goto out_r;
+ 314   2              }
+ 315   1              else
+ 316   1                {
+ 317   2                  krcount--;
+ 318   2                  if(krcount==0)
+ 319   2                    {
+ 320   3                      nkp=1;
+ 321   3                      s_buzzer=0;
+ 322   3                      krcount=32;
+ 323   3                      goto out_r;   
+ 324   3                    }
+ 325   2                    else
+ 326   2                      {
+ 327   3                        goto out_r;
+ 328   3                      }
+ 329   2                }
+ 330   1                out_r:
+ 331   1                y=0;
+ 332   1          }
+ 333            
+ 334              void inc()
+ 335                {
+ 336   1              while(start_sw==0)    
+ 337   1                {
+ 338   2                  goto out_id;
+ 339   2                }
+ 340   1                ds1++;
+ 341   1                if(ds1==0x09+'0'+1)
+ 342   1                  {
+ 343   2                    ds1=0x00+'0';
+ 344   2                    ds2++;
+ 345   2                    
+ 346   2                    if(ds2==0x09+'0'+1)
+ 347   2                      {
+ 348   3                        ds2=0x00+'0'+1;
+ 349   3                        ds3++;
+ 350   3      
+ 351   3                        if(ds3==0x09+'0'+1)     
+ 352   3                          {
+ 353   4                            ds3=0x00+'0';
+ 354   4                            ds4++;
+ 355   4      
+ 356   4                            if(ds4==0x09+'0'+1)
+ 357   4                              {
+ 358   5                                ds1=ds2=ds3=ds4='0';
+ 359   5                              }
+ 360   4                          }
+ 361   3                      }
+ 362   2                  }
+ 363   1                  out_id:
+C51 COMPILER V9.60.7.0   KEY_PAD_2                                                         07/27/2024 16:58:59 PAGE 7   
+
+ 364   1                  n=0;
+ 365   1            }
+ 366          
+ 367          
+ 368                void key_release()
+ 369                  {
+ 370   1                while(nkp==1)
+ 371   1                  {
+ 372   2                    key_ready=0;
+ 373   2                    nkp=0;
+ 374   2                  }
+ 375   1              }
+ 376          
+ 377          
+ 378                void gate_key()
+ 379                  {
+ 380   1                while(key_ready==0)
+ 381   1                  {
+ 382   2                  }
+ 383   1                  ACC=key_code;
+ 384   1                  key_code=ascii[ACC];
+ 385   1              }
+ 386            
+ 387          
+ 388                  void keyprocess()
+ 389                    {
+ 390   1      
+ 391   1                  ACC=key_code;
+ 392   1                  switch(ACC)
+ 393   1                  {
+ 394   2                      case '5':
+ 395   2                      process_a();
+ 396   2                      key_release();
+ 397   2                      break;
+ 398   2        
+ 399   2                      case '6':
+ 400   2                      process_b();
+ 401   2                      key_release();
+ 402   2                      break;
+ 403   2                    
+ 404   2                      case '7':
+ 405   2                      process_c();
+ 406   2                      key_release();
+ 407   2        
+ 408   2                      default:
+ 409   2                      key_release();
+ 410   2                  }
+ 411   1                }
+ 412                    
+ 413          
+ 414                    void process_a()
+ 415                      {
+ 416   1                    ds1='0';
+ 417   1                    ds2='0';
+ 418   1                    ds3='0';
+ 419   1                    ds4='0';
+ 420   1                    start_sw=0;
+ 421   1                  }
+ 422          
+ 423          
+ 424                    void process_b()
+ 425                    {
+C51 COMPILER V9.60.7.0   KEY_PAD_2                                                         07/27/2024 16:58:59 PAGE 8   
+
+ 426   1                  start_sw=0;
+ 427   1                }
+ 428                    
+ 429                    
+ 430                    void process_c()
+ 431                      {
+ 432   1                    start_sw=0;
+ 433   1                    ds1='0';
+ 434   1                    ds2='0';
+ 435   1                    ds3='0';
+ 436   1                    ds4='0';
+ 437   1                  }
+ 438                      
+ 439                      void disp_sw()
+ 440                        {
+ 441   1                      ds1=arr[0];
+ 442   1                      ds2=arr[0];
+ 443   1                      ds3=arr[0];
+ 444   1                      ds4=arr[0];
+ 445   1                    }
+ 446          
+ 447                        void buzzer()
+ 448          
+ 449                        {
+ 450   1                      if(s_buzzer==1)
+ 451   1                        {
+ 452   2                          sb=~sb;
+ 453   2                        }   
+ 454   1                        else
+ 455   1                          {
+ 456   2                            goto out_b;
+ 457   2                          }
+ 458   1                         out_b:
+ 459   1                          z=0;
+ 460   1                        }
+ 461                        
+ 462                        
+ 463                        
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    673    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     57    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      7    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
